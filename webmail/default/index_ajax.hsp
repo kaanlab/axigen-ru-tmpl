@@ -1,0 +1,949 @@
+<%_json = "no"%><%IFNOT ISEMPTY(GET.custom)%><%IFNOT EQ(GET.custom, "ajaxdirect")%><%IF EXISTS(GET.loginFailed)%><%_json = "yes"%>
+        {
+            success: false,
+            errors: {
+                reason: t('Неверное имя пользователя или пароль.')
+            }
+        }
+        <%ELIF EXISTS(GET.passwordExpired)%><%_json = "yes"%>
+        {
+            success: false,
+            passwordExpired: true,
+        <%IF EXISTS(GET.passwordUnchangeable)%>
+            passwordUnchangeable: true,
+        <%ENDIF%>
+            username: '<%GET.username%>',
+            domainname: '<%GET.domainname%>'
+        }
+        <%ELIF EXISTS(GET.changePasswordFailed)%><%_json = "yes"%>
+        {
+            success: false,
+            passMinLength: '<%GET.passMinLength%>',
+            passMaxLength: '<%GET.passMaxLength%>',
+            passRequiredCharacters: '<%GET.passRequiredCharacters%>',
+            passHistorySize: '<%GET.passHistorySize%>',
+            passRenewalInterval: '<%GET.passRenewalInterval%>',
+            errors: {
+                reason: '<%GET.passLastError%>'
+            }
+        }
+        <%ENDIF%><%ENDIF%><%ENDIF%><%IFNOT EQ(_json, "yes")%>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+    <%INCLUDE "i18n_init.hsp"%>
+
+    <meta http-equiv="x-ua-compatible" content="IE=8">
+    <title><%%><%in_term = "WebMail :: АГРК"%><%INCLUDE "i18n_t.hsp"%>
+    </title>
+    <link rel="shortcut icon" href="/favicon-32x32.png" sizes="16x16 32x32 96x96" type="image/png" />
+    <!-- Include custom login styles -->
+    <link rel="StyleSheet" type="text/css" href="private/ajax/Libraries/Ext/resources/css/ext-all.css" />
+    <link rel="StyleSheet" type="text/css" href="css/style_ajax.css" />
+
+    <%IF EQ(AXI_RTL, "true")%>
+    <link rel="StyleSheet" type="text/css" href="css/style_ajax_rtl.css" />  
+    <%ENDIF%>
+
+    <!-- Login JS functions -->
+    <script type="text/javascript" src="js/lib_login.js"></script>
+
+    <script type="text/javascript">
+        AxiUrl = "<%url = connection_getURLRedirect()%><%url%>";
+    </script>
+    <%%><%IF EXISTS(_inlineJS)%><%_inlineJS%><%ENDIF%>
+
+    <script type="text/javascript">
+    <%IF EQ(AXI_RTL, "true")%>
+        Axi = {AccountInfo: {languageDirection: 'rtl'}};
+    <%ELSE%>
+        Axi = {AccountInfo: {languageDirection: 'ltr'}};
+    <%ENDIF%>
+    </script>
+
+</head>
+
+<body class="lang-<%AXI_PUBLIC_LANGUAGE%><%" "%><%IF EQ(AXI_RTL, "true")%>rtl<%ENDIF%>">
+
+<!--  Preloading Images -->
+<img src="private/ajax/Resources/images/axitheme-classic/webmail-loading-bg.png" style="display: none;" >
+<img src="/images/ajax/bg-login.png" style="display: none;" >
+<div class="overlay-opacity"></div>
+
+<script type="text/javascript">
+    // Ensure login screen gets rendered in the top level frame
+    if (top != window) {
+        top.document.location.href = document.location.href;
+    }
+</script>
+
+
+<noscript>
+<div class="errorContainer">
+    <div class="wrap">
+        <div class="elogo" title="<%in_term = "WebMail :: АГРК"%><%INCLUDE "i18n_t.hsp"%>"></div>
+
+        <div class="topBorder">
+            <div class="leftCorner"></div>
+            <div class="rightCorner"></div>
+        </div>
+        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Javascript in your browser!"%><%INCLUDE "i18n_t.hsp"%>
+        </h1></div>
+        <div class="bottomBorder">
+            <div class="leftCorner"></div>
+            <div class="rightCorner"></div>
+        </div>
+    </div>
+</div>
+</noscript>
+
+<div class="errorContainer" id="cookiesDisabled">
+    <div class="wrap">
+        <div class="elogo" title="<%in_term = "WebMail :: АГРК"%><%INCLUDE "i18n_t.hsp"%>"></div>
+
+        <div class="topBorder">
+            <div class="leftCorner"></div>
+            <div class="rightCorner"></div>
+        </div>
+        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Cookies in your browser!"%><%INCLUDE "i18n_t.hsp"%>
+        </h1></div>
+        <div class="bottomBorder">
+            <div class="leftCorner"></div>
+            <div class="rightCorner"></div>
+        </div>
+    </div>
+</div>
+
+<!-- main container -->
+<div class="main-container">
+	
+    <div class="center-container">
+    <h1> <%in_term = "mail.host"%><%INCLUDE "i18n_t.hsp"%>
+    </h1>
+	<p><%in_term = "Вход в электронную почту"%><%INCLUDE "i18n_t.hsp"%>
+     </p>
+        <div class="center-inner-container">
+            <div class="form-container" id="form-container"><div class="domainname-container" id="domainname-container"></div></div>
+        </div>
+    </div>
+
+
+    <div class="footnote">
+    
+        <%IFNOT EQ(serviceInfo.userInterfaceType, "ajaxOnly")%>
+        <p><%%><%in_term = "стандартный интерфейс"%><%in_display = "false"%><%INCLUDE "i18n_t.hsp"%><%link = "<a title=\"" + out + "\" href=\"/\" onclick=\"switchInterface('" + AXI_LOGIN_COOKIE + "', 'standard')\">" + out + "</a>"%><%link = str_escape(link)%><%in_term = "Переключиться на %interface"%><%in_data = "{\"%interface\":\"" + link + "\"}"%><%INCLUDE "i18n_t.hsp"%>
+        </p>
+        <%ENDIF%>
+
+    </div>    
+
+</div>
+
+<div class="footnote">
+    <div class="copyright-note">
+        <p class="powered-by"><%in_term = "Powered by "%><%INCLUDE "i18n_t.hsp"%><a target="blank" href="https://www.axigen.com/?utm_source=product&utm_medium=webmail&utm_campaign=webmail_login_page">Axigen</a></p>
+        <p class="copyright"><%in_term = "&copy; 2010-2015 Администрация Главы Республики Карелия."%><%INCLUDE "i18n_t.hsp"%></p>
+    </div>
+</div>
+
+<!--  Display preloader -->
+<div id="loading-mask">
+    <div id="loading">
+      <div class="loader-wrapp"><div class="loader"></div></div>  
+    </div>
+</div>
+
+<!-- Piwik Image Tracker-->
+  <img src="http://stat.host/piwik.php?idsite=2&rec=1" style="border:0" alt="" />
+<!-- End Piwik -->
+
+<script type="text/javascript" src="private/ajax/Libraries/Ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Ext/ext-all.js"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Axi/Ext/widgets/layout/FormLayout.js"></script>
+<script type="text/javascript" src="private/ajax/Classes/Messenger.js"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Axi/Axi.js"></script>
+
+<script type="text/javascript">
+Ext.onReady(function(){
+    var loginBut, loginRightBut;
+    //Check if browser accepts cookies
+    if (!cookiesAllowed()) {
+        var container = Ext.DomQuery.selectNode('#cookiesDisabled');
+        if (container) container.style.display = "block";
+    }
+
+    removeCookie("checkOverQuota");
+    removeCookie("passwordExpireWarning");
+
+    Ext.BLANK_IMAGE_URL = '/images/dot.gif';
+
+    Ext.QuickTips.init();
+    var messenger = new Axi.Messenger();
+
+    <%IFNOT EQ(serviceInfo.serviceName, "webmailProxy")%><%IF rememberLogin()%>
+        var cookieContents = getCookie("AXIWMRememberLogin");
+        var showDomainList = <%IF EQ(showDomainList, "true")%>true<%ELSE%>false<%ENDIF%>;
+
+        if (cookieContents && showDomainList) {
+            var cookieUsernameParts = cookieContents.split('@');
+            if (cookieUsernameParts[0]) {
+                var cookieUsername = cookieUsernameParts[0];
+            }
+
+            if (cookieUsernameParts[1]) {
+                var cookieDomain = cookieUsernameParts[1];
+            }
+        } else {
+            var cookieUsername = cookieContents;
+        }
+
+        if (cookieUsername === 'true') cookieUsername = '';
+    <%ENDIF%><%ENDIF%>
+
+    var getFormFieldValue = function (name) {
+            var result = '';
+
+            var domains = [
+            <%IF EQ(showDomainList, "true")%>
+                t('select a domain'),
+            <%FOREACH domain IN domains%>
+                '<%domain%>',
+            <%ENDFOR%><%ENDIF%>
+            ];
+            var form_no = "remember";
+            
+            // Commenting the code below in order to 
+            // prevent IE & FF to not display the form fields and/or button when refreshing after server restart
+            /*
+            if (Ext.isGecko && document.forms[form_no].password.value !== '' && ((document.forms[form_no].username && document.forms[form_no].username.value !== '') || (document.forms[form_no].domainname && document.forms[form_no].domainname.value !== ''))) {
+                switch(name) {
+                    case "username":
+                        if (document.forms[form_no].username && document.forms[form_no].username.value !== '') {
+                            result = document.forms[form_no].username.value;
+                        }
+                        break;
+
+                    case "password":
+                        if (document.forms[form_no].password.value !== '' && getFormFieldValue('username')) {
+                            result = document.forms[form_no].password.value;
+                        }
+                        break;
+
+                    case "domainname":
+                        if (document.forms[form_no].domainname && document.forms[form_no].domainname.value !== '' && domains.indexOf(document.forms[form_no].domainname.value) != -1) {
+                            result = document.forms[form_no].domainname.value;
+                        }
+                        break;
+                }
+            } else { */
+                switch(name) {
+                    case "username":
+                        result = (typeof cookieUsername !== "undefined" && cookieUsername)?cookieUsername:''
+                        break;
+
+                    case "password":
+                        break;
+
+                    case "domainname":
+                        result = (typeof cookieDomain !== "undefined" && cookieDomain)?cookieDomain:'';
+                        break;
+                }
+        // }
+
+            return result;
+    }
+
+    <%IF EXISTS(GET.logout)%>
+    //Logout message
+    messenger.info(t('Вы успешно вышли из системы!'));
+    <%ELIF EXISTS(GET.loginFailed)%>
+    messenger.error(t('Неверное имя пользователя или пароль!'));
+    <%ELIF EXISTS(GET.passwordUnchangeable)%>
+    messenger.error(t('Your password has expired. Please contact the administrator in order to get a new one.'));
+    <%ENDIF%>
+
+    // Remove preloader
+    setTimeout(function(){
+        Ext.get('loading').remove();
+        Ext.get('loading-mask').fadeOut({remove:true});
+    }, 250);
+
+    var loginActions = {
+        method:'POST',
+
+        // Functions that fire (success or failure) when the server responds.
+        // The one that executes is determined by the
+        // response that comes from login.asp as seen below. The server would
+        // actually respond with valid JSON,
+        // something like: response.write "{ success: true}" or
+        // response.write "{ success: false, errors: { reason: 'Login failed. Try again.' }}"
+        // depending on the logic contained within your server script.
+        // If a success occurs, the user is notified with an alert messagebox,
+        // and when they click "OK", they are redirected to whatever page
+        // you define as redirect.
+
+        success: function (elem, data) {
+            // hide axi preloader
+            login.preloaderStop(false);
+
+            // Remember Login
+            var rememberLogin = Ext.getCmp('rememberLogin');
+
+            var usernameCmp = Ext.getCmp('username');
+            if (usernameCmp) var username = usernameCmp.getValue();
+
+            var domainnameCmp = Ext.getCmp('domainname');
+            if (domainnameCmp) var domainname = domainnameCmp.getValue();
+
+            var rawUsername = username;
+            if (domainname) rawUsername += '@' + domainname;
+
+            if (rememberLogin && rememberLogin.getValue()) {
+                setCookie("AXIWMRememberLogin", rawUsername);
+            } else {
+                removeCookie("AXIWMRememberLogin");
+            }
+
+            var response = Ext.decode(data.response.responseText);
+
+            var _h = response.sessionKey;
+
+            var redirect = '/?_h=' + _h;
+            window.location = redirect;
+
+        },
+
+        // Failure function, see comment above re: success and failure.
+        // You can see here, if login fails, it throws a messagebox
+        // at the user telling him / her as much.
+        failure:function(form, action){
+            // hide axi preloader
+            login.preloaderStop();
+
+            var obj = Ext.util.JSON.decode(action.response.responseText);
+
+            if (obj && obj.passwordExpired) {
+                if (obj.passwordUnchangeable) {
+                    return messenger.error(t('Your password has expired. Please contact the administrator in order to get a new one.'));
+                }
+
+                var redirectUrl = '/?passwordExpired=yes&username=' + obj.username;
+                if (obj.domainname) {
+                    redirectUrl += '&domainName='+ obj.domainname;
+                }
+
+                document.location.href = redirectUrl;
+                return;
+            }
+
+            if(action.failureType == 'server'){
+                Axi.Messenger.getInstance().error(obj.errors.reason);
+                if (obj.errors.code == 'MLIST_NOT_SUPPORTED') {
+                    Ext.Ajax.request({
+                        url: '/?_h=' + obj.errors.sessionKey + '&action=logout'
+                    });
+                }
+            }
+            else {
+                Axi.Messenger.getInstance().error(t('Unable to connect to server!'));
+            }
+
+            var passwordCmp = Ext.getCmp('password');
+            passwordCmp.setValue();
+            passwordCmp.focus();
+
+        }
+    }
+
+    // Basic focus manager
+    FocusManager = {
+        order: [
+            'username',
+            <%IF EQ(showDomainList, "true")%>'domainname',<%ENDIF%>
+            'password',
+            <%IFNOT EQ(serviceInfo.serviceName, "webmailProxy")%><%IF rememberLogin()%>'rememberMe',<%ENDIF%><%ENDIF%><%IFNOT ISEMPTY(url)%>'connectionType',<%ENDIF%>
+            'login'
+        ],
+
+        fields: {},
+        activeField: null,
+        add: function (cmp) {
+            //console.log('ADD', cmp.name);
+            cmp.on('focus', function () {
+                FocusManager.activeField = cmp;
+            });
+            FocusManager.fields[cmp.name] = cmp;
+        },
+
+        setActive: function (f) {
+            //console.log('SETACTIVE', f.name);
+            FocusManager.activeField = f;
+            f.focus.defer(1, f);
+        },
+
+        goto: function (step) {
+            //console.log('GOTO', step);
+            var cid = FocusManager.activeField.name;
+
+            for (var idx = 0; idx < FocusManager.order.length && FocusManager.order[idx] != cid; ++idx);
+
+            //console.log('GOTO', 'found ' + idx);
+
+            idx += step;
+            if (idx >= FocusManager.order.length) {
+                idx = 0;
+            } else if (idx < 0) {
+                idx = FocusManager.order.length - 1;
+            }
+
+            //console.log('GOTO', 'goto ' + idx);
+
+            return FocusManager.fields[FocusManager.order[idx]];
+        },
+        next: function () {
+            //console.log('NEXT');
+            FocusManager.setActive(FocusManager.goto(1));
+        },
+        prev: function () {
+            //console.log('PREV');
+            FocusManager.setActive(FocusManager.goto(-1));
+        }
+    };
+
+    Ext.EventManager.on(document, 'keydown', function (e) {
+        if (Ext.EventObject.TAB != e.getKey()) {
+            return;
+        }
+
+        if (e.shiftKey) {
+            FocusManager.prev();
+        } else {
+            FocusManager.next();
+        }
+
+        e.stopEvent();
+    });
+
+    Ext.EventManager.on(document, 'keydown', function (e) {
+        if (Ext.EventObject.ENTER != e.getKey()) {
+            return;
+        }
+
+        // Block any other submit action for 100ms
+        login.nosubmit = true;
+        (function () { login.nosubmit = false; }).defer(100);
+
+        // Extra validation for the ENTER key
+        var passwordField = login.getForm().findField('password');
+        if (e.getTarget().id == 'username' && !passwordField.getValue()) {
+            passwordField.focus(false, true);
+            return;
+        }
+
+        login.axisubmit();
+    });
+
+
+    // Create a variable to hold our EXT Form Panel.
+    // Assign various config options as seen.
+    var login = new Ext.FormPanel({
+        labelWidth:80,
+        url:'/?action=login&custom=ajax',
+        frame: true,
+
+        labelWidth: 70,
+
+        renderTo: Ext.get('form-container'),
+        monitorValid:true,
+
+        preloaderStart: function() {
+            // make sure no messages are visible & show Axi preloader
+            Axi.Messenger.getInstance().clearMessages();
+            Axi.Util.preloaderStart({
+                msg: t('Загрузка...'),
+                width: 108
+            });
+
+            if (loginBut) loginBut.getEl().dom.className += ' x-item-disabled';
+            if (loginRightBut) loginRightBut.className += ' x-item-disabled';
+
+        },
+
+        preloaderStop: function(enableButton) {
+            Axi.Util.preloaderStop();
+
+            if (enableButton !== false) {
+                if (loginBut) loginBut.getEl().dom.className = loginBut.getEl().dom.className.replace(/ x-item-disabled/ig, '');
+                if (loginRightBut) loginRightBut.className = loginRightBut.className.replace(/ x-item-disabled/ig, '');
+            }
+        },
+
+        /**
+         * Validate and submit form
+         * @param {Boolean} [run=false]
+         * @return {Boolean}
+         */
+
+        axisubmit: function (run)
+        {
+            // Prevent multiple form submits
+            if (!run) {
+                window.clearTimeout(this._tid);
+                this._tid = (function () {
+                    this.axisubmit(true);
+                }).defer(100, this);
+                return;
+            }
+
+            var field;
+            var errors = [];
+            var values = this.getForm().getValues();
+
+            var domainname = this.getForm().findField('domainname');
+            if (domainname && !domainname.getValue()) {
+                var rawEl = Ext.DomQuery.selectNode('input[name=domainname]');
+                if (rawEl && rawEl.value != t('select a domain')) {
+                    domainname.setValue(rawEl.value);
+                }
+            }
+
+            if (!values['username']) {
+                errors.push({
+                    id: 'username',
+                    msg: t('обязательное поле')
+                });
+
+                if (typeof field == 'undefined') {
+                    if (field = Ext.DomQuery.selectNode('#username')) {
+                        field.focus();
+                    }
+                }
+            }
+
+            if (!values['password']) {
+                errors.push({
+                    id: 'password',
+                    msg: t('обязательное поле')
+                });
+
+                if (typeof field == 'undefined') {
+                    if (field = Ext.DomQuery.selectNode('#password')) {
+                        field.focus();
+                    }
+                }
+            }
+
+            if (!values['username'] || !values['password']) {
+                Axi.Messenger.getInstance().error(t('Пожалуйста, введите свои данные в соответствующие поля.'));
+            }
+
+            if (errors.length) {
+                this.getForm().markInvalid(errors);
+                return false;
+            }
+
+            this.getForm().submit(loginActions);
+
+            this.preloaderStart();
+        },
+
+    // Specific attributes for the text fields for username / password.
+    // The "name" attribute defines the name of variables sent to the server.
+        items: [{
+            xtype: 'fieldset',
+            cls: 'x-axi-fieldset',
+            autoHeight: true,
+            items:[
+                {
+                    layout: 'column',
+                    style: <%IF EQ(AXI_RTL, "true")%>'padding: 0 14px 0 14px'<%ELSE%>'padding: 0 14px 0 14px'<%ENDIF%>,
+                    items: {
+                        columnWidth: <%IF EQ(showDomainList, "true")%>.5<%ELSE%>1<%ENDIF%>,
+                        layout: 'axiform',
+                        items: {
+                            xtype: 'textfield',
+                            autoCreate: {tag: "input"},
+                            id: 'username',
+                            fieldLabel: '',
+                            labelSeparator: '',
+                            labelPlaceholder: t('Введите имя пользователя... '),
+                            cls: 'x-axi-textfield',
+                            itemCls: 'x-axi-label',
+                            name: 'username',
+                            value: getFormFieldValue('username'),
+                            anchor: '100%',
+                            allowBlank: true,
+                            listeners: {
+                                render: function(cmp) {
+                                    FocusManager.add(cmp);
+                                    if (!cmp.value) FocusManager.setActive(cmp);
+                                }
+                            }
+                        }
+                    }
+                },{
+                    style: <%IF EQ(AXI_RTL, "true")%>'padding: 0 14px 0 14px'<%ELSE%>'padding: 0 14px 0 14px'<%ENDIF%>,
+                    layout: 'axiform',
+                    items: {
+                        xtype: 'textfield',
+                        autoCreate: {tag: "input"},
+                        id: 'password',
+                        fieldLabel: '',
+                        labelSeparator: '',
+                        labelPlaceholder: t('Введите пароль... '),
+                        cls: 'x-axi-textfield x-axi-password',
+                        itemCls: 'x-axi-label',
+                        name: 'password',
+                        inputType: 'password',
+                        value: getFormFieldValue('password'),
+                        anchor: '100%',
+                        allowBlank: true,
+                        enableKeyEvents: true,
+                        firstcharPressed: false,
+                        capsMessageSent: false,
+                        listeners: {
+                            render: function(cmp) {
+                                FocusManager.add(cmp);
+                                if (getFormFieldValue('username')) FocusManager.setActive(cmp);
+                            },
+                            keydown: function(p, e) {
+                                charCode = e.getCharCode();
+                                if( this.firstcharPressed && charCode == 20 ) {
+                                    this.el.toggleClass('x-axi-password-caps');
+                                    if( !this.capsMessageSent && this.el.hasClass('x-axi-password-caps') ) {
+                                        this.capsMessageSent = true;
+                                        Axi.Messenger.getInstance().warn(t("Caps Lock is ON."));
+                                    }
+                                }
+                            },
+                            keypress: function(p, e) {
+                                charCode = e.getCharCode();
+                                if (charCode <= 64 || charCode >= 123 || (charCode >= 91 && charCode <= 96)) {
+                                    return;
+                                }
+                                this.firstcharPressed = true;
+                                if(
+                                    (e.shiftKey && charCode >= 97 && charCode <= 122) ||
+                                    (!e.shiftKey && charCode >= 65 && charCode <= 90)
+                                ){
+                                    if( !this.capsMessageSent ) {
+                                        this.capsMessageSent = true;
+                                        Axi.Messenger.getInstance().warn(t("включен Caps Lock."));
+                                    }
+                                    this.addClass('x-axi-password-caps')
+                                } else {
+                                    this.removeClass('x-axi-password-caps')
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    xtype: 'textfield',
+                    inputType: 'submit',
+                    hideLabel: 'true',
+                    type: 'submit',
+                    name: 'login',
+                    value: t('Вход'),
+                    ctCls: 'x-axi-button',
+                    listeners: {
+                        render: function (cmp) {
+
+                            loginBut = this;
+
+                            cmp.getEl().dom.parentNode.parentNode.className += ' x-axi-button-container';
+                            var div = document.createElement('div');
+                            div.className = 'x-axi-button-right'
+                            cmp.getEl().dom.parentNode.appendChild(div);
+
+                            loginRightBut = div;
+
+                            Ext.EventManager.on(cmp.getEl().dom.parentNode, "mousedown", function () {
+                                cmp.getEl().dom.parentNode.parentNode.className += ' x-axi-button-click';
+                            });
+
+                            Ext.EventManager.on(cmp.getEl().dom.parentNode, "mouseup", function () {
+                                cmp.getEl().dom.parentNode.parentNode.className = cmp.getEl().dom.parentNode.parentNode.className.replace(/ x-axi-button-click/ig, '');
+                            });
+
+                            Ext.EventManager.on(cmp.getEl().dom.parentNode, "mouseover", function () {
+                                cmp.getEl().dom.parentNode.parentNode.className += ' x-axi-button-over';
+                            });
+
+                            Ext.EventManager.on(cmp.getEl().dom.parentNode, "mouseout", function () {
+                                cmp.getEl().dom.parentNode.parentNode.className = cmp.getEl().dom.parentNode.parentNode.className.replace(/ x-axi-button-over/ig, '');
+                                cmp.getEl().dom.parentNode.parentNode.className = cmp.getEl().dom.parentNode.parentNode.className.replace(/ x-axi-button-click/ig, '');
+                            });
+
+                            Ext.EventManager.on(cmp.getEl(), "click", function (e, el) {
+                                //Check if browser accepts cookies
+                                if (!cookiesAllowed()) {
+                                    var container = Ext.DomQuery.selectNode('#cookiesDisabled');
+                                    if (container) {
+                                        container.style.display = "block";
+                                    }
+                                // Ext triggers this click event on submit, so
+                                // any other submit action (i.e. ENTER) must block
+                                // this behaviour
+                                } else if (!login.nosubmit) {
+                                    login.axisubmit();
+                                }
+                            });
+
+                            FocusManager.add(cmp);
+                        }
+                    }
+                },
+   
+<%IFNOT EQ(serviceInfo.serviceName, "webmailProxy")%><%IF rememberLogin()%>
+                {
+                    xtype: 'checkbox',
+
+                    id: 'rememberLogin',
+                    name: 'rememberLogin',
+                    boxLabel: t('Remember me on this computer'),
+
+                    hideLabel: true,
+                    ctCls: 'x-axi-checkbox',
+                    checked: cookieContents?true:false,
+
+                    listeners: {
+                        render: function (cmp) {
+                            cmp.getEl().parent().name = "rememberMe";
+                            FocusManager.add(cmp.getEl().parent());
+                        }
+                    }
+                },
+    <%ELSE%>
+                {
+                    xtype: 'panel',
+                    height: 21,
+                    html: '&nbsp;'
+                },
+    <%ENDIF%><%ELSE%>
+                {
+                    xtype: 'panel',
+                    height: 21,
+                    html: '&nbsp;'
+                },
+<%ENDIF%><%IF EQ(serviceInfo.hasPasswordRecovery, "true")%>
+                {
+                    <%IF EQ(serviceInfo.hasUsernameRecovery, "true")%>
+                        cls: 'x-axi-link-both',
+                    <%ELSE%>
+                        cls: 'x-axi-link-single',
+                    <%ENDIF%>
+
+                    layout: 'form',
+                    items: [{
+                        xtype: 'button',
+                        cls: 'x-axi-link x-axi-link-password',
+                        text: t('Forgot password?'),
+                        name: 'forgotPassword',
+                        tooltip: t('Click here if you cannot remember your password'),
+                        tooltipType: 'title',
+                        listeners: {
+                            click: function () {
+                                window.location = "/?recoverPassword=";
+                            },
+                            render: function (cmp) {
+                                FocusManager.add(cmp);
+                            }
+                        }
+                    }]
+                },
+<%ENDIF%><%IF EQ(serviceInfo.hasUsernameRecovery, "true")%>
+                {
+                    <%IF EQ(serviceInfo.hasPasswordRecovery, "true")%>
+                        cls: 'x-axi-link-both',
+                    <%ELSE%>
+                        cls: 'x-axi-link-single',
+                    <%ENDIF%>
+
+                    layout: 'form',
+                    items: [{
+                        xtype: 'button',
+                        cls: 'x-axi-link x-axi-link-username',
+                        text: t('Forgot username?'),
+                        name: 'forgotUsername',
+                        tooltip: t('Click here if you cannot remember your username'),
+                        tooltipType: 'title',
+                        listeners: {
+                            click: function () {
+                                window.location = "/?recoverUsername=";
+                            },
+                            render: function (cmp) {
+                                FocusManager.add(cmp);
+                            }
+                        }
+                    }]
+                },
+<%ENDIF%>
+
+              
+                {
+                    layout: 'column',
+                    items: [
+                    {
+                       
+                    },
+                    {
+                       
+                    }
+
+                    <%IFNOT connection_isSecure()%><%IFNOT ISEMPTY(url)%>
+                    ,{
+                        layout: 'form',
+                        items: [{
+                            xtype: 'button',
+                            cls: 'x-axi-link x-axi-link-secure',
+                            text: t('Secure login'),
+                            name: 'connectionType',
+                            tooltip: t('Secure Connection'),
+                            tooltipType: 'title',
+                            listeners: {
+                                click: function () {
+                                    if (!AxiUrl) return;
+                                    window.location = urlRedirect(AxiUrl, 'https')
+                                },
+                                render: function (cmp) {
+                                    FocusManager.add(cmp);
+                                }
+                            }
+                        }]
+                    }<%ENDIF%><%ELSE%><%IFNOT ISEMPTY(url)%>
+                    ,{
+                        layout: 'form',
+                        items: [{
+                            xtype: 'button',
+                            cls: 'x-axi-link',
+                            name: 'connectionType',
+                            text: t('Unsecure login'),
+                            tooltip: t('Unsecure Connection'),
+                            tooltipType: 'title',
+                            listeners: {
+                                click: function () {
+                                    if (!AxiUrl) return;
+                                    window.location = urlRedirect(AxiUrl, 'http')
+                                },
+                                render: function (cmp) {
+                                    FocusManager.add(cmp);
+                                }
+                            }
+                        }]
+                    }<%ENDIF%><%ENDIF%><%IF EQ(AXI_PUBLIC_I18N, "true", "yes")%><%IFNOT EQ(AXI_DISABLE_LANGUAGE_SELECTION, "true", "yes")%>,{
+                        xtype: 'combo',
+                        store: [['en', 'English'], ['ar', 'اللغة العربية'], ['hr', 'Croatian']],
+                        triggerAction: 'all',
+                        editable: false,
+                        mode: 'local',
+                        disableKeyFilter: true,
+                        forceSelection: true,
+                        width: 125,
+                        ctCls: 'x-axi-white-combo <%AXI_PUBLIC_LANGUAGE%>-flag',
+                        listClass: 'x-axi-white-list',
+                        selectedClass: 'x-axi-white-selected',
+                        renderedClasses: false,
+                        listeners: {
+                            expand: function (cmp) {
+                                if (cmp.renderedClasses) return;
+
+                                // this is a very ugly HACK
+                                // but ext doesn't give me any choice
+                                var listOptions = cmp.list.query('.x-combo-list-item');
+
+                                cmp.store.each(function (item, index, length) {
+                                    listOptions[index].className += " " + item.get("value") + "-flag";
+                                });
+
+                                cmp.renderedClasses = true;
+                            },
+                            select: function (combo, record, index) {
+                                var lang = record.get('value');
+
+                                var ct = combo.getEl().findParent('.x-axi-white-combo');
+                                var cls = ct.className.match(/[a-z]+-flag/);
+
+                                if (cls == null) {
+                                    return false;
+                                }
+
+                                cls = cls[0];
+
+                                Ext.fly(ct).removeClass(cls);
+                                Ext.fly(ct).addClass(lang + '-flag');
+
+                                // Set cookie and reload page
+                                switchLanguage('public_language', lang);
+                                document.location.href = '/';
+                            }
+                        },
+                        name: 'language',
+                        value: '<%AXI_PUBLIC_LANGUAGE%>'
+                    }<%ENDIF%><%ENDIF%>]
+                },
+                {
+                    xtype: 'hidden',
+                    autoCreate: {
+                        tag: 'input',
+                        autocomplete: 'on',
+                        type: 'hidden'
+                    },
+                    name: 'domainname',
+                    id: 'domainname',
+                    value: ''
+
+                }
+                ]
+        }]
+    });
+
+    <%IF EQ(showDomainList, "true")%>
+        var domainname = new Ext.form.ComboBox({
+            renderTo: 'domainname-container',
+            listeners: {
+                render: function (cmp) {
+                    FocusManager.add(cmp);
+                },
+                select: function (combo, record, info) {
+                    var domainame = Ext.getCmp('domainname');
+                    if (domainame) {
+                        domainame.setValue(record.data.value);
+                    }
+                }
+            },
+            autoCreate: {tag: "input", type: "text", size: "20", autocomplete: "on"},
+            name: 'domainname',
+            hideLabel: true,
+            ctCls: 'x-axi-brown-combo',
+            cls: 'x-axi-domains-combo',
+            listClass: 'x-axi-brown-list',
+            selectedClass: 'x-axi-brown-selected',
+            editable: false,
+            mode: 'local',
+            disableKeyFilter: true,
+            forceSelection: true,
+            triggerAction: 'all',
+            width: 196,
+            value: getFormFieldValue('domainname'),
+            store: [
+            ['', t('select a domain')],
+
+            <%domainsCount = getSize(domains)%><%DEC(domainsCount)%><%_domainsI = 0%><%FOREACH domain IN domains%>
+            ['<%domain%>', '<%domain%>']<%IF LT(_domainsI, domainsCount)%>,<%ENDIF%><%INC(_domainsI)%><%ENDFOR%>
+            ]
+        });
+    <%ENDIF%>
+});
+
+
+</script>
+<form name="remember" style="display: none;"><input type="text" name="username"/><input type="password" name="password"/></form>
+</body>
+
+</html>
+
+<%ENDIF%>

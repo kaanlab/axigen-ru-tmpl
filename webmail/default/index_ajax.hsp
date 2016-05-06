@@ -2,7 +2,7 @@
         {
             success: false,
             errors: {
-                reason: t('Неверное имя пользователя или пароль.')
+                reason: t('Login failed. Try again.')
             }
         }
         <%ELIF EXISTS(GET.passwordExpired)%><%_json = "yes"%>
@@ -37,22 +37,24 @@
     <%INCLUDE "i18n_init.hsp"%>
 
     <meta http-equiv="x-ua-compatible" content="IE=8">
-    <title><%%><%in_term = "WebMail :: АГРК"%><%INCLUDE "i18n_t.hsp"%>
+    <title><%%><%in_term = "WebMail :: АГРК"%><%in_data = "{\"Axigen\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>
     </title>
-    <link rel="shortcut icon" href="/favicon-32x32.png" sizes="16x16 32x32 96x96" type="image/png" />
+    <link rel="shortcut icon" href="/favicon-32x32.png<%RESOURCE_SUFFIX%>" sizes="16x16 32x32 96x96" type="image/png" />
     <!-- Include custom login styles -->
-    <link rel="StyleSheet" type="text/css" href="private/ajax/Libraries/Ext/resources/css/ext-all.css" />
-    <link rel="StyleSheet" type="text/css" href="css/style_ajax.css" />
+    <link rel="StyleSheet" type="text/css" href="private/ajax/Libraries/Ext/resources/css/ext-all.css<%RESOURCE_SUFFIX%>" />
+    <link rel="StyleSheet" type="text/css" href="private/ajax/Resources/css/axitheme-ocean/other-icons.css<%RESOURCE_SUFFIX%>" />
+    <link rel="StyleSheet" type="text/css" href="css/axigen-web-fonts.css<%RESOURCE_SUFFIX%>" />
+    <link rel="StyleSheet" type="text/css" href="css/style_ajax.css<%RESOURCE_SUFFIX%>" />
 
     <%IF EQ(AXI_RTL, "true")%>
-    <link rel="StyleSheet" type="text/css" href="css/style_ajax_rtl.css" />  
+    <link rel="StyleSheet" type="text/css" href="css/style_ajax_rtl.css<%RESOURCE_SUFFIX%>" />
     <%ENDIF%>
 
     <!-- Login JS functions -->
-    <script type="text/javascript" src="js/lib_login.js"></script>
+    <script type="text/javascript" src="js/lib_login.js<%RESOURCE_SUFFIX%>"></script>
 
     <script type="text/javascript">
-        AxiUrl = "<%url = connection_getURLRedirect()%><%url%>";
+        AxiUrl = "<%redirectURL%>";
     </script>
     <%%><%IF EXISTS(_inlineJS)%><%_inlineJS%><%ENDIF%>
 
@@ -69,7 +71,7 @@
 <body class="lang-<%AXI_PUBLIC_LANGUAGE%><%" "%><%IF EQ(AXI_RTL, "true")%>rtl<%ENDIF%>">
 
 <!--  Preloading Images -->
-<img src="private/ajax/Resources/images/axitheme-classic/webmail-loading-bg.png" style="display: none;" >
+<img src="private/ajax/Resources/images/axitheme-ocean/webmail-loading-bg.png" style="display: none;" >
 <img src="/images/ajax/bg-login.png" style="display: none;" >
 <div class="overlay-opacity"></div>
 
@@ -84,13 +86,13 @@
 <noscript>
 <div class="errorContainer">
     <div class="wrap">
-        <div class="elogo" title="<%in_term = "WebMail :: АГРК"%><%INCLUDE "i18n_t.hsp"%>"></div>
+        <div class="elogo" title="<%in_term = "WebMail :: АГРК"%><%in_data = "{\"AXIGEN\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>"></div>
 
         <div class="topBorder">
             <div class="leftCorner"></div>
             <div class="rightCorner"></div>
         </div>
-        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Javascript in your browser!"%><%INCLUDE "i18n_t.hsp"%>
+        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Javascript in your browser!"%><%in_data = "{\"AXIGEN\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>
         </h1></div>
         <div class="bottomBorder">
             <div class="leftCorner"></div>
@@ -108,7 +110,7 @@
             <div class="leftCorner"></div>
             <div class="rightCorner"></div>
         </div>
-        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Cookies in your browser!"%><%INCLUDE "i18n_t.hsp"%>
+        <div class="content"><h1><%%><%in_term = "In order to access AXIGEN Webmail, <br />you must enable Cookies in your browser!"%><%in_data = "{\"AXIGEN\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>
         </h1></div>
         <div class="bottomBorder">
             <div class="leftCorner"></div>
@@ -121,10 +123,12 @@
 <div class="main-container">
 	
     <div class="center-container">
-    <h1> <%in_term = "mail.host"%><%INCLUDE "i18n_t.hsp"%>
-    </h1>
-	<p><%in_term = "Вход в электронную почту"%><%INCLUDE "i18n_t.hsp"%>
-     </p>
+        <h1>
+            <%in_term = "Axigen WebMail"%><%in_data = "{\"Axigen\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>
+        </h1>
+        <p>
+            <%in_term = "Log in to your Axigen email account"%><%in_data = "{\"Axigen\":\"" + brandingInfo.brandingName + "\"}"%><%INCLUDE "i18n_t.hsp"%>
+        </p>
         <div class="center-inner-container">
             <div class="form-container" id="form-container"><div class="domainname-container" id="domainname-container"></div></div>
         </div>
@@ -132,20 +136,21 @@
 
 
     <div class="footnote">
-    
+
         <%IFNOT EQ(serviceInfo.userInterfaceType, "ajaxOnly")%>
-        <p><%%><%in_term = "стандартный интерфейс"%><%in_display = "false"%><%INCLUDE "i18n_t.hsp"%><%link = "<a title=\"" + out + "\" href=\"/\" onclick=\"switchInterface('" + AXI_LOGIN_COOKIE + "', 'standard')\">" + out + "</a>"%><%link = str_escape(link)%><%in_term = "Переключиться на %interface"%><%in_data = "{\"%interface\":\"" + link + "\"}"%><%INCLUDE "i18n_t.hsp"%>
+        <p><%%><%in_term = "Standard Interface"%><%in_display = "false"%><%INCLUDE "i18n_t.hsp"%><%link = "<a title=\"" + out + "\" href=\"/\" onclick=\"switchInterface('" + AXI_LOGIN_COOKIE + "', 'standard')\">" + out + "</a>"%><%link = str_escape(link)%><%in_term = "Switch to %interface"%><%in_data = "{\"%interface\":\"" + link + "\"}"%><%INCLUDE "i18n_t.hsp"%>
         </p>
         <%ENDIF%>
 
+        <div id="language-container"></div>
     </div>    
 
 </div>
 
 <div class="footnote">
     <div class="copyright-note">
-        <p class="powered-by"><%in_term = "Powered by "%><%INCLUDE "i18n_t.hsp"%><a target="blank" href="https://www.axigen.com/?utm_source=product&utm_medium=webmail&utm_campaign=webmail_login_page">Axigen</a></p>
-        <p class="copyright"><%in_term = "&copy; 2010-2015 Администрация Главы Республики Карелия."%><%INCLUDE "i18n_t.hsp"%></p>
+        <p class="powered-by">Powered by <a target="blank" href="https://www.axigen.com/?utm_source=product&utm_medium=webmail&utm_campaign=webmail_login_page_<%AXI_PUBLIC_LANGUAGE%>">Axigen</a></p>
+        <p class="copyright"><%in_term = "Email, calendaring and collaboration<br />Total privacy, high availability and scalability"%><%INCLUDE "i18n_t.hsp"%></p>
     </div>
 </div>
 
@@ -159,12 +164,11 @@
 <!-- Piwik Image Tracker-->
   <img src="http://stat.host/piwik.php?idsite=2&rec=1" style="border:0" alt="" />
 <!-- End Piwik -->
-
-<script type="text/javascript" src="private/ajax/Libraries/Ext/adapter/ext/ext-base.js"></script>
-<script type="text/javascript" src="private/ajax/Libraries/Ext/ext-all.js"></script>
-<script type="text/javascript" src="private/ajax/Libraries/Axi/Ext/widgets/layout/FormLayout.js"></script>
-<script type="text/javascript" src="private/ajax/Classes/Messenger.js"></script>
-<script type="text/javascript" src="private/ajax/Libraries/Axi/Axi.js"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Ext/adapter/ext/ext-base.js<%RESOURCE_SUFFIX%>"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Ext/ext-all.js<%RESOURCE_SUFFIX%>"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Axi/Ext/widgets/layout/FormLayout.js<%RESOURCE_SUFFIX%>"></script>
+<script type="text/javascript" src="private/ajax/Classes/Messenger.js<%RESOURCE_SUFFIX%>"></script>
+<script type="text/javascript" src="private/ajax/Libraries/Axi/Axi.js<%RESOURCE_SUFFIX%>"></script>
 
 <script type="text/javascript">
 Ext.onReady(function(){
@@ -258,9 +262,9 @@ Ext.onReady(function(){
 
     <%IF EXISTS(GET.logout)%>
     //Logout message
-    messenger.info(t('Вы успешно вышли из системы!'));
+    messenger.info(t('You have successfully logged out.'));
     <%ELIF EXISTS(GET.loginFailed)%>
-    messenger.error(t('Неверное имя пользователя или пароль!'));
+    messenger.error(t('Login failed. Try again.'));
     <%ELIF EXISTS(GET.passwordUnchangeable)%>
     messenger.error(t('Your password has expired. Please contact the administrator in order to get a new one.'));
     <%ENDIF%>
@@ -364,7 +368,7 @@ Ext.onReady(function(){
             'username',
             <%IF EQ(showDomainList, "true")%>'domainname',<%ENDIF%>
             'password',
-            <%IFNOT EQ(serviceInfo.serviceName, "webmailProxy")%><%IF rememberLogin()%>'rememberMe',<%ENDIF%><%ENDIF%><%IFNOT ISEMPTY(url)%>'connectionType',<%ENDIF%>
+            <%IFNOT EQ(serviceInfo.serviceName, "webmailProxy")%><%IF rememberLogin()%>'rememberMe',<%ENDIF%><%ENDIF%><%IFNOT ISEMPTY(redirectURL)%>'connectionType',<%ENDIF%>
             'login'
         ],
 
@@ -463,7 +467,7 @@ Ext.onReady(function(){
             // make sure no messages are visible & show Axi preloader
             Axi.Messenger.getInstance().clearMessages();
             Axi.Util.preloaderStart({
-                msg: t('Загрузка...'),
+                msg: t('Logging in...'),
                 width: 108
             });
 
@@ -513,7 +517,7 @@ Ext.onReady(function(){
             if (!values['username']) {
                 errors.push({
                     id: 'username',
-                    msg: t('обязательное поле')
+                    msg: t('This field is required')
                 });
 
                 if (typeof field == 'undefined') {
@@ -526,7 +530,7 @@ Ext.onReady(function(){
             if (!values['password']) {
                 errors.push({
                     id: 'password',
-                    msg: t('обязательное поле')
+                    msg: t('This field is required')
                 });
 
                 if (typeof field == 'undefined') {
@@ -537,7 +541,7 @@ Ext.onReady(function(){
             }
 
             if (!values['username'] || !values['password']) {
-                Axi.Messenger.getInstance().error(t('Пожалуйста, введите свои данные в соответствующие поля.'));
+                Axi.Messenger.getInstance().error(t('Please fill in both your username and your password.'));
             }
 
             if (errors.length) {
@@ -569,8 +573,8 @@ Ext.onReady(function(){
                             id: 'username',
                             fieldLabel: '',
                             labelSeparator: '',
-                            labelPlaceholder: t('Введите имя пользователя... '),
-                            cls: 'x-axi-textfield',
+                            labelPlaceholder: t('Username'),
+                            cls: 'x-axi-textfield <%IF EQ(showDomainList, "true")%> textfield-with-domain-list<%ENDIF%>',
                             itemCls: 'x-axi-label',
                             name: 'username',
                             value: getFormFieldValue('username'),
@@ -593,7 +597,7 @@ Ext.onReady(function(){
                         id: 'password',
                         fieldLabel: '',
                         labelSeparator: '',
-                        labelPlaceholder: t('Введите пароль... '),
+                        labelPlaceholder: t('Password'),
                         cls: 'x-axi-textfield x-axi-password',
                         itemCls: 'x-axi-label',
                         name: 'password',
@@ -631,7 +635,7 @@ Ext.onReady(function(){
                                 ){
                                     if( !this.capsMessageSent ) {
                                         this.capsMessageSent = true;
-                                        Axi.Messenger.getInstance().warn(t("включен Caps Lock."));
+                                        Axi.Messenger.getInstance().warn(t("Caps Lock is ON."));
                                     }
                                     this.addClass('x-axi-password-caps')
                                 } else {
@@ -647,7 +651,7 @@ Ext.onReady(function(){
                     hideLabel: 'true',
                     type: 'submit',
                     name: 'login',
-                    value: t('Вход'),
+                    value: t('Log in'),
                     ctCls: 'x-axi-button',
                     listeners: {
                         render: function (cmp) {
@@ -729,60 +733,62 @@ Ext.onReady(function(){
                     height: 21,
                     html: '&nbsp;'
                 },
-<%ENDIF%><%IF EQ(serviceInfo.hasPasswordRecovery, "true")%>
-                {
-                    <%IF EQ(serviceInfo.hasUsernameRecovery, "true")%>
-                        cls: 'x-axi-link-both',
-                    <%ELSE%>
-                        cls: 'x-axi-link-single',
-                    <%ENDIF%>
-
-                    layout: 'form',
-                    items: [{
-                        xtype: 'button',
-                        cls: 'x-axi-link x-axi-link-password',
-                        text: t('Forgot password?'),
-                        name: 'forgotPassword',
-                        tooltip: t('Click here if you cannot remember your password'),
-                        tooltipType: 'title',
-                        listeners: {
-                            click: function () {
-                                window.location = "/?recoverPassword=";
-                            },
-                            render: function (cmp) {
-                                FocusManager.add(cmp);
-                            }
-                        }
-                    }]
-                },
-<%ENDIF%><%IF EQ(serviceInfo.hasUsernameRecovery, "true")%>
-                {
-                    <%IF EQ(serviceInfo.hasPasswordRecovery, "true")%>
-                        cls: 'x-axi-link-both',
-                    <%ELSE%>
-                        cls: 'x-axi-link-single',
-                    <%ENDIF%>
-
-                    layout: 'form',
-                    items: [{
-                        xtype: 'button',
-                        cls: 'x-axi-link x-axi-link-username',
-                        text: t('Forgot username?'),
-                        name: 'forgotUsername',
-                        tooltip: t('Click here if you cannot remember your username'),
-                        tooltipType: 'title',
-                        listeners: {
-                            click: function () {
-                                window.location = "/?recoverUsername=";
-                            },
-                            render: function (cmp) {
-                                FocusManager.add(cmp);
-                            }
-                        }
-                    }]
-                },
 <%ENDIF%>
 
+                {
+                    layout: 'column',
+                    cls: 'x-axi-link-username-password',
+                    items: [
+                        {
+                        <%IF EQ(serviceInfo.hasPasswordRecovery, "true")%><%IF EQ(serviceInfo.hasUsernameRecovery, "true")%>
+                                cls: 'x-axi-link-both',
+                            <%ELSE%>
+                                cls: 'x-axi-link-single',
+                            <%ENDIF%>
+
+                            layout: 'form',
+                            items: [{
+                                xtype: 'button',
+                                cls: 'x-axi-link x-axi-link-password',
+                                text: t('Forgot password?'),
+                                name: 'forgotPassword',
+                                listeners: {
+                                    click: function () {
+                                        window.location = "/?recoverPassword=";
+                                    },
+                                    render: function (cmp) {
+                                        FocusManager.add(cmp);
+                                    }
+                                }
+                            }]
+                        <%ENDIF%>
+                        },
+                        {
+                        <%IF EQ(serviceInfo.hasUsernameRecovery, "true")%><%IF EQ(serviceInfo.hasPasswordRecovery, "true")%>
+                                cls: 'x-axi-link-both',
+                            <%ELSE%>
+                                cls: 'x-axi-link-single',
+                            <%ENDIF%>
+
+                            layout: 'form',
+                            items: [{
+                                xtype: 'button',
+                                cls: 'x-axi-link x-axi-link-username',
+                                text: t('Forgot username?'),
+                                tooltipType: 'title',
+                                listeners: {
+                                    click: function () {
+                                        window.location = "/?recoverUsername=";
+                                    },
+                                    render: function (cmp) {
+                                        FocusManager.add(cmp);
+                                    }
+                                }
+                            }]
+                        <%ENDIF%>
+                        }
+                    ]
+                },
               
                 {
                     layout: 'column',
@@ -794,7 +800,7 @@ Ext.onReady(function(){
                        
                     }
 
-                    <%IFNOT connection_isSecure()%><%IFNOT ISEMPTY(url)%>
+                    <%IFNOT connection_isSecure()%><%IFNOT ISEMPTY(redirectURL)%>
                     ,{
                         layout: 'form',
                         items: [{
@@ -802,8 +808,6 @@ Ext.onReady(function(){
                             cls: 'x-axi-link x-axi-link-secure',
                             text: t('Secure login'),
                             name: 'connectionType',
-                            tooltip: t('Secure Connection'),
-                            tooltipType: 'title',
                             listeners: {
                                 click: function () {
                                     if (!AxiUrl) return;
@@ -814,7 +818,7 @@ Ext.onReady(function(){
                                 }
                             }
                         }]
-                    }<%ENDIF%><%ELSE%><%IFNOT ISEMPTY(url)%>
+                    }<%ENDIF%><%ELSE%><%IFNOT ISEMPTY(redirectURL)%>
                     ,{
                         layout: 'form',
                         items: [{
@@ -822,8 +826,6 @@ Ext.onReady(function(){
                             cls: 'x-axi-link',
                             name: 'connectionType',
                             text: t('Unsecure login'),
-                            tooltip: t('Unsecure Connection'),
-                            tooltipType: 'title',
                             listeners: {
                                 click: function () {
                                     if (!AxiUrl) return;
@@ -834,55 +836,6 @@ Ext.onReady(function(){
                                 }
                             }
                         }]
-                    }<%ENDIF%><%ENDIF%><%IF EQ(AXI_PUBLIC_I18N, "true", "yes")%><%IFNOT EQ(AXI_DISABLE_LANGUAGE_SELECTION, "true", "yes")%>,{
-                        xtype: 'combo',
-                        store: [['en', 'English'], ['ar', 'اللغة العربية'], ['hr', 'Croatian']],
-                        triggerAction: 'all',
-                        editable: false,
-                        mode: 'local',
-                        disableKeyFilter: true,
-                        forceSelection: true,
-                        width: 125,
-                        ctCls: 'x-axi-white-combo <%AXI_PUBLIC_LANGUAGE%>-flag',
-                        listClass: 'x-axi-white-list',
-                        selectedClass: 'x-axi-white-selected',
-                        renderedClasses: false,
-                        listeners: {
-                            expand: function (cmp) {
-                                if (cmp.renderedClasses) return;
-
-                                // this is a very ugly HACK
-                                // but ext doesn't give me any choice
-                                var listOptions = cmp.list.query('.x-combo-list-item');
-
-                                cmp.store.each(function (item, index, length) {
-                                    listOptions[index].className += " " + item.get("value") + "-flag";
-                                });
-
-                                cmp.renderedClasses = true;
-                            },
-                            select: function (combo, record, index) {
-                                var lang = record.get('value');
-
-                                var ct = combo.getEl().findParent('.x-axi-white-combo');
-                                var cls = ct.className.match(/[a-z]+-flag/);
-
-                                if (cls == null) {
-                                    return false;
-                                }
-
-                                cls = cls[0];
-
-                                Ext.fly(ct).removeClass(cls);
-                                Ext.fly(ct).addClass(lang + '-flag');
-
-                                // Set cookie and reload page
-                                switchLanguage('public_language', lang);
-                                document.location.href = '/';
-                            }
-                        },
-                        name: 'language',
-                        value: '<%AXI_PUBLIC_LANGUAGE%>'
                     }<%ENDIF%><%ENDIF%>]
                 },
                 {
@@ -936,14 +889,100 @@ Ext.onReady(function(){
             ['<%domain%>', '<%domain%>']<%IF LT(_domainsI, domainsCount)%>,<%ENDIF%><%INC(_domainsI)%><%ENDFOR%>
             ]
         });
-    <%ENDIF%>
+    <%ENDIF%><%IF EQ(AXI_PUBLIC_I18N, "true", "yes")%>
+        // Ensure the language cookie is set
+        switchLanguage('public_language', "<%AXI_PUBLIC_LANGUAGE%>");
+
+    <%IFNOT EQ(AXI_DISABLE_LANGUAGE_SELECTION, "true", "yes")%>
+        // Generate the languages data array
+        var languages = [];
+        <%FOREACH name IN languages INDEXED BY lang%><%prop = map_getValue(langInAjax, lang)%><%IF EQ(prop, "true")%>
+                languages.push(['<%lang%>', '<%name%>']);
+            <%ENDIF%><%ENDFOR%>
+
+        // Build the languages combo store
+        var languagesStore = [];
+        for (var i = 0; i < languages.length; ++i) {
+            var entry = languages[i];
+
+            var lang = entry[0];
+            var name = entry[1];
+
+            name = name.replace(/[&#[0-9]+;]*/ig, function (chr) {
+                return String.fromCharCode(chr.replace(/[&#;]/ig, ''));
+            });
+
+            languagesStore.push([
+                lang,
+                name
+            ]);
+        }
+
+        // Sort the language store taking into account unicode names
+        languagesStore.sort(function (a, b) {
+            return a[1].localeCompare(b[1], "en");
+        });
+
+        new Ext.form.ComboBox({
+            renderTo: 'language-container',
+            store: languagesStore,
+            triggerAction: 'all',
+            editable: false,
+            mode: 'local',
+            disableKeyFilter: true,
+            forceSelection: true,
+            width: 125,
+
+            ctCls: 'x-axi-brown-combo <%AXI_PUBLIC_LANGUAGE%>-flag',
+            cls: 'x-axi-language-combo',
+            listClass: 'x-axi-brown-list x-axi-language-list',
+            selectedClass: 'x-axi-brown-selected',
+
+            renderedClasses: false,
+
+            listeners: {
+                expand: function (cmp) {
+                    if (cmp.renderedClasses) return;
+
+                    // HACK to inject language dependent flag classes
+                    var listOptions = cmp.list.query('.x-combo-list-item');
+
+                    cmp.store.each(function (item, index, length) {
+                        listOptions[index].className += " " + item.get("value") + "-flag";
+                    });
+
+                    cmp.renderedClasses = true;
+                },
+                select: function (combo, record, index) {
+                    var lang = record.get('value');
+
+                    var ct = combo.getEl().findParent('.x-axi-brown-combo');
+                    var cls = ct.className.match(/[a-z]+-flag/);
+
+                    if (cls == null) {
+                        return false;
+                    }
+
+                    cls = cls[0];
+
+                    Ext.fly(ct).removeClass(cls);
+                    Ext.fly(ct).addClass(lang + '-flag');
+
+                    // Set cookie and reload page
+                    switchLanguage('public_language', lang);
+                    document.location.href = '/';
+                }
+            },
+            name: 'language',
+            value: '<%AXI_PUBLIC_LANGUAGE%>'
+        });
+    <%ENDIF%><%ENDIF%>
 });
 
 
 </script>
 <form name="remember" style="display: none;"><input type="text" name="username"/><input type="password" name="password"/></form>
 </body>
-
 </html>
 
 <%ENDIF%>

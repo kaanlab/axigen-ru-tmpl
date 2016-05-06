@@ -1,13 +1,14 @@
 /**
  * \file ru.js
+ * \date 06-05-2016
  *
- * Copyright &copy; 2015 Axigen. All Rights Reserved.
+ * Copyright &copy; 2016 Axigen. All Rights Reserved.
  * \brief DICTIONARY - Russian
  */
 
 Ext.namespace('Axi.DictionaryData.ru');
 
-Axi.DictionaryData.ru = {
+Axi.DictionaryData['ru'] = {
 
     /*******************************************************************************
      * Special tags are introduced to allow the separation of various terms into
@@ -111,6 +112,8 @@ Axi.DictionaryData.ru = {
     "End": "Выключить",
     "ReplyTo": "Отвечать",
     "MyDefaultSignature": "Подпись по умолчанию",
+	"EnterSignatureName":	"Имя в подписи",	
+	"UnnamedSignature":	"Подпись",
     "EditTemplate": "Изменить шаблон",
     "Wait": "Подождите",
     "MyContacts": "Мои контакты",
@@ -252,6 +255,8 @@ Axi.DictionaryData.ru = {
     "HeaderNewMessageTitle1": "1 новое сообщение",
     "HeaderNewMessageInfo": "У Вас %{count} новых сообщений",
     "HeaderNewMessageTitle": "%{count} новых сообщений",
+	"HeaderThemeChange":	"Темы",	
+	"HeaderThemeChangeDialog":	"Выберите  тему",
 
     /**
      * North Region - Header Links
@@ -323,7 +328,7 @@ Axi.DictionaryData.ru = {
      * @category {General/Footer} {NA}
      */
 
-    "FooterCopyright": "Copyright &copy; 2010-2015 Отдел информатизации и технической защиты информации.",
+    "FooterCopyright": "Copyright &copy; 2011-2016 Отдел информатизации и технической защиты информации.",
 
     /*******************************************************************************
      * Category LEFTAREA/GENERAL -- Tree Region general strings
@@ -406,7 +411,7 @@ Axi.DictionaryData.ru = {
     "CPerms_l": "Просмотреть папку",
     "CPerms_r": "Прочитать содержимое папки",
     "CPerms_s": "Общий доступ к статусу \"прочитано/не прочитано\"",
-    "CPerms_w": "Установить/сбросить флаги",
+    "CPerms_w": "Установить/сбросить метки",
     "CPerms_i": "Добавить элементы",
     "CPerms_k": "Добавить вложенные папки",
     "CPerms_x": "Удалить папку",
@@ -419,13 +424,13 @@ Axi.DictionaryData.ru = {
 
     "Cperms_tooltip_l": "Папка появится в иерархии (\"просмотр\")",
     "Cperms_tooltip_r": "Элементы этой папки доступны для чтения",
-    "Cperms_tooltip_s": "Изменения флага \"прочитано/не прочитано\" видны другим пользователям (не применяется для папок контактов, календарей, задач, журнала и записей)",
-    "Cperms_tooltip_w": "Изменить флаги кроме \"прочитано/не прочитано\" и \"удалено/не удалено\" (не применяется для папок контактов, календарей, задач, журнала и записей)",
+    "Cperms_tooltip_s": "Изменения метки \"прочитано/не прочитано\" видны другим пользователям (не применяется для папок контактов, календарей, задач, журнала и записей)",
+    "Cperms_tooltip_w": "Изменить метки кроме \"прочитано/не прочитано\" и \"удалено/не удалено\" (не применяется для папок контактов, календарей, задач, журнала и записей)",
     "Cperms_tooltip_i": "Добавить новые элементы в папку (создать новый, переместить в, скопировать в). Требуются права \"добавить элементы\" и \"удалить элементы\" для изменения элементов.",
     "Cperms_tooltip_k": "Добавить новые вложенные папки ниже этой папки (создать новую, переместить в, скопировать в)",
     "Cperms_tooltip_x": "Удалить эту папку, включая все содержащиеся в ней элементы",
-    "Cperms_tooltip_t": "Изменть флаг \"удалено, не удалено\"",
-    "Cperms_tooltip_e": "Очистить элементы помеченные флагом \"удалено\"",
+    "Cperms_tooltip_t": "Изменть метку \"удалено, не удалено\"",
+    "Cperms_tooltip_e": "Очистить элементы с меткой \"удалено\"",
     "Cperms_tooltip_a": "Изменить права доступа на эту папку",
     "Cperms_tooltip_lr": "Папка видна и содержащиеся в ней элементы доступны для чтения",
     "Cperms_tooltip_te": "Удалить элементы в этой папке. Требуются права доступа \"добавить элементы\" и \"удалить элементы\" для изменения элементов.",
@@ -646,7 +651,8 @@ Axi.DictionaryData.ru = {
      * MailView
      */
 
-    "MovePaneRight": "Переместить панель чтения<br />направо",
+    "MovePane":	"Переместить панель",
+	"MovePaneRight": "Переместить панель чтения<br />направо",
     "MovePaneBottom": "Переместить панель чтения<br />вниз",
 
     "ViewStatusItem": "1 элемент",
@@ -718,13 +724,15 @@ Axi.DictionaryData.ru = {
     "Mail_HE_EEXISTS": "Выбранные сообщения больше не существуют.",
     "Mail_HE_ACL_DENY": "У Вас нет прав для удаления выбранных сообщений.",
     "Mail_HE_MESSAGE_SIZE_EXCEEDED": "Вы превысили выделенное пространство на диске.<br/>Освободите место, удалив старые сообщения. ",
-    "MailFlagError": "Флаг не может быть установлен.",
+    "MailFlagError": "Метку нельзя удалить.",
 
     "MailDeleteConfirmationTitle": "Подтвердите удаление сообщения",
     "MailDeleteConfirmationMessage": "Вы уверены что хотите удалить выбранные сообщения?",
 
     "MailDelete_HE_ACL_DENY": "У Вас нет прав для удаления выбранных сообщений.",
     "MailDeleteError": "Выбранные сообщения не могут быть удалены.",
+	"MailDeleteItemInfo":	"Сообщение было удалено",	
+	"MailDeleteItemsInfo":	"Сообщения были удалены",
 
     "MailMoveSpam_HE_ACL_DENY": "У Вас нет прав на перемещение выбранных сообщений в \"Спам\".",
     "MailMoveSpamError": "Выбранные сообщения не могут быть перемещены в \"Спам\"",
@@ -747,6 +755,10 @@ Axi.DictionaryData.ru = {
     "MailCopyError": "Выбранные сообщения не могут быть скопированы.",
     "MailCopyItemInfo": "Сообщение скопировано.",
     "MailCopyItemsInfo": "Сообщения скопированы.",
+	"MailUndo":	"Отмена",	
+	"MailUndoing":	"Отмена...",	
+	"MailUndoError":	"Отмена не удалась.",	
+	"MailUndoSuccess":	"Отмена завершена успешно.",
 
     /**
      * AdvancedSearch
@@ -789,7 +801,7 @@ Axi.DictionaryData.ru = {
     "SearchMoreOptions": "Подробнее",
     "SearchLessOptions": "Скрыть подробности",
 
-    "SearchFlag": "Флаг",
+    "SearchFlag": "Метка",
     "SearchHeader": "Заголовок",
 
     "SearchFolderDialogTitle": "Искать в почтовых папках",
@@ -918,10 +930,13 @@ Axi.DictionaryData.ru = {
     "AttachmentUploadError": "Ошибка загрузки.",
 
     "AttachmentUploadTooltipStart": "Начинаю загрузку вложений ...",
+	"AttachmentUploadTooltipStatusUploading":	"Загрузка...",
     "AttachmentUploadTooltipMsg": "Загружено %{loaded} (%{percent}%) из ${total}.",
 
     "AttachmentUpload_NS_ERROR_FILE_NOT_FOUND": "Выбранный файл не найден.",
     "AttachmentUpload_NS_ERROR_SIZE_LIMIT": "Вложение \"%{fileName}\" слишком большое для выгрузки текущим браузером.",
+	"AttachmentUpload_ENTITY_TOO_LARGE":	"Файл \"%{fileName}\" во вложении слишком большой для выгрузки",
+	
 
     /**
      * ITips
@@ -1610,6 +1625,12 @@ Axi.DictionaryData.ru = {
     "STGSignatures": "Подписи",
     "STGAddSignature": "Добавить подпись",
     "STGEditSignature": "Редактировать подпись",
+	"STGArchiving":	"Архивные",	
+	"STGArchiveIn":	"Архивировать почту в",	
+	"STGSingleArchiveFolder":	"отдельную архивную папку",	
+	"STGYearlyArchiveFolders":	"архивную папку по годам",	
+	"STGMonthlyArchiveFolders":	"архивную папку по месяцам",	
+	"STGMonthlyArchiveSubfolders":	"архивную папку по годам и подпапку по месяцам",
     "STGOOO": "Автоответчик \"Нет на месте\"",
     "STGEnableOOO": "Активировать автоответчик",
     "STGNow": "сейчас",
@@ -1639,6 +1660,7 @@ Axi.DictionaryData.ru = {
     "STGPasswordAlreadyEntered": "Новый пароль не должен совпадать с последними %{size} паролями.",
     "STGPasswordChangeNotAllowed": "Вам не разрешено менять пароль. Пожалуйста свяжитесь с администратором чтобы получить новый.",
     "STGSignatureNotSaved": "Подпись не может быть сохранена.",
+	"STGSignature_HE_FBIG":	"Подпись слишком большая и её нельзя сохранить",
     "STGOOONotSaved": "Не могу сохранить автоответчик \"Нет на месте\".",
     "STGEnterOldPassword": "Пожалуйста введите сначала свой старый пароль.",
     "STGNewPasswordNotBlank": "Новый пароль не может быть пустым.",
@@ -1671,6 +1693,9 @@ Axi.DictionaryData.ru = {
     "STGSecretQuestion6": "Номер библиотечной карточки?",
     "STGSecretQuestionCustom": "Мой вопрос",
     "STINTTitle": "Интерфейс",
+	"STINTComposerPref":	"Редактирование письма",	
+	"STINTConfigure":	"Настройки",	
+	"STINFThemeName":	"Тема",
     "STINFBodyFiltering": "Фильтр тела письма",
     "STINFNoFiltering": "Без фильтра",
     "STINFLowLevel": "Низкая фильтрация",
@@ -1691,6 +1716,7 @@ Axi.DictionaryData.ru = {
     "STINFDisplaySortOrder": "Порядок отображения/сортировки контактов",
     "STINFDisplayBodyPreview": "Показывать часть сообщения в теме письма",
     "STINFDisplayToolbarText": "Показывать подписи для кнопок меню",
+	"STINFDisplaySidebarText":	"Отображать названия кнопок в боковой панеле",
     "STINFReadReciptsTitle": "Подтверждение прочтения",
     "STINFReadRecipts": "Требовать подтверждения прочтения",
     "STINFReadReciptsTooltipMsg": "Это настройка по умолчанию для новых сообщений. Для определённых сообщений Вы можете изменить поведение из меню \"Настройки\" окна создания сообщения.",
@@ -1722,6 +1748,9 @@ Axi.DictionaryData.ru = {
     "STINFShowContactDetails": "Всегда показывать личные и рабочие детали при добавлении или редактировании контакта.",
     "STINFAutoAddRecepients": "Автоматически добавлять получателей отправленных сообщений в Собранные адреса",
     "STINFAutoReadInterval": "Отмечать сообщение как прочитанное через",
+	"STINFAutoReadDisplayed":	"когда они отображаются",	
+	"STINFAutoReadInterval":	"через",	
+	"STINFAutoReadSelection":	"при переключении на другое",
     "STINFPlaySound": "Звуковое событие при получении новой почты",
     "STINFWhenForwardingOrReplying": "При пересылке или ответе",
     "STINFAlwaysHTML": "всегда использовать HTML",
@@ -1768,7 +1797,7 @@ Axi.DictionaryData.ru = {
     "STAGETTplBody": "Тело шаблона",
     "STAGETAppendToBodyMsg": "Текст будет автоматически добавлен к телу письма:",
     "STAGEmailPatternInfo": "Вы можете использовать * как замену части электронного адреса (например: *@example.com)",
-    "STAGSendNDR": "Отменить сообщение и послать уведомление о недоставке",
+    "STAGSendNDR": "Сбрасывать сообщения и отправлять уведомление",
     "STAGDiscard": "Отменить сообщение",
     "STAGMoveToFilteredEmail": "Сохранить сообщение в паке \"Нежелательная почта\" ",
     "STAGMoveToFilteredEmailWithIC": "Сохранить сообщение в паке \"Нежелательная почта\" и использовать конактную информацию",
@@ -1868,9 +1897,9 @@ Axi.DictionaryData.ru = {
     "STFLDescriptionActionDiscard": "и удалить их",
     "STFLDescriptionActionMarkAsRead": "и отметить их как прочитанные",
     "STFLDescriptionActionMarkAsUnread": "и отметить их как непрочитанные",
-    "STFLDescriptionActionMarkAsFlagged": "и отметить их флагом",
+    "STFLDescriptionActionMarkAsFlagged": "и добавить метку",
     "STFLDescriptionActionMarkAsCompleted": "и отметить их как выполненные",
-    "STFLDescriptionActionMarkAsNone": "и очистить их флаги",
+    "STFLDescriptionActionMarkAsNone": "и очистить их метки",
     "STFLDescriptionActionRedirect": "и перенаправить их в \"%{destination}\"",
     "STFLDescriptionActionForward": "и переслать их в \"%{destination}\"",
     "STFLDescriptionActionVacation": "и автоматически ответить сообщением отсутствия \"%{subject}\"",
@@ -1884,7 +1913,7 @@ Axi.DictionaryData.ru = {
     "STFLConditions": "Условия",
     "STFLActions": "Действия",
     "MarkAs": "Отметить как",
-    "Flag": "Флаг",
+    "Flag": "Метка",
     "MoveToTrash": "Переместить в Корзину",
     "PermanentlyDelete": "Удалить полностью",
     "STFLEditPrependText": "Редактировать текст приставки",
@@ -2057,6 +2086,8 @@ Axi.DictionaryData.ru = {
     "CMenuPrintItems": "Печатать выделенные элементы",
     "CMenuSortUnread": "Непрочитанные",
     "CMenuSortImportance": "Важные",
+	"CMenuSortFlag":	"Метка",	
+	"CMenuSortSize":	"Размер",
     "CMenuSortAsc": "Сортировать по возрастанию",
     "CMenuSortDesc": "Сортировать по убыванию",
     "CMenuRespond": "Ответить",
@@ -2276,6 +2307,7 @@ Axi.DictionaryData.ru = {
     "RemindersMenuHours": "3 часа",
     "RemindersMenuDay": "1 день",
     "RemindersMenuWeek": "1 неделя",
+	"RemindersWindowTitleNoReminders":	"У Вас нет напоминаний",
     "RemindersWindowTitle": "%{count} напоминаний",
     "Reminders": "Напоминания",
     "Day": "День",
@@ -2284,6 +2316,7 @@ Axi.DictionaryData.ru = {
     "Month": "Месяц",
     "CurrentMonth": "Текущий месяц",
     "CurrentWeek": "Текущая неделя",
+	"WeekNumber":	"Неделя %{count}",
     "FileUploadBrowse": "Просмотр...",
     "HtmlEditorAddLink": "Добавить ссылку",
     "HtmlEditorEditLink": "Редактировать ссылку",
